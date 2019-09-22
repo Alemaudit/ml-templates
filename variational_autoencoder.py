@@ -72,15 +72,39 @@ output = keras.layers.Dense(
 
 def vae_loss(x, y):
     xent_loss = keras.losses.binary_crossentropy(x, y)
-    kl_loss = - 0.5 * tf.math.reduce_mean(1 + z_log_sigma - tf.math.square(z_mean) - tf.math.exp(z_log_sigma), axis=-1)
+    kl_loss = - 0.5 * tf.math.reduce_mean(
+        1 + z_log_sigma - tf.math.square(z_mean) - tf.math.exp(z_log_sigma),
+        axis=-1
+    )
     return xent_loss + kl_loss
 
 
 vae = keras.models.Model(inputs=inputs, outputs=output, name='ovl_vae')
 encoder = keras.models.Model(inputs, z_mean)
 
-TB = keras.callbacks.TensorBoard(log_dir='./logs', histogram_freq=0, batch_size=X.shape[0], write_graph=True, write_grads=False, write_images=False, embeddings_freq=0, embeddings_layer_names=None, embeddings_metadata=None, embeddings_data=None, update_freq='epoch')
-ES = keras.callbacks.EarlyStopping(monitor='mean_squared_error', min_delta=0, patience=0, verbose=0, mode='auto', baseline=None, restore_best_weights=True)
+TB = keras.callbacks.TensorBoard(
+    log_dir='./logs',
+    histogram_freq=0,
+    batch_size=X.shape[0],
+    write_graph=True,
+    write_grads=False,
+    write_images=False,
+    embeddings_freq=0,
+    embeddings_layer_names=None,
+    embeddings_metadata=None,
+    embeddings_data=None,
+    update_freq='epoch'
+)
+
+ES = keras.callbacks.EarlyStopping(
+    monitor='mean_squared_error',
+    min_delta=0,
+    patience=0,
+    verbose=0,
+    mode='auto',
+    baseline=None,
+    restore_best_weights=True
+)
 
 vae.compile(
     optimizer=keras.optimizers.RMSprop(

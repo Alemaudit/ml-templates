@@ -38,7 +38,7 @@ def build_prep_pipeline(continuous_cols, category_cols):
     )
     full_prep_pipeline = ColumnTransformer(
         transformers=[
-            ('kpi_transformer', continuous_pipeline, continuous_cols),
+            ('continuous_transformer', continuous_pipeline, continuous_cols),
             ('cat_transformer', categorical_pipeline, category_cols)
         ]
     )
@@ -46,15 +46,14 @@ def build_prep_pipeline(continuous_cols, category_cols):
 
 
 def build_estimator():
-    """ Shortcut to return an appropriate Sklearn model. """
+    """ Shortcut to return a Sklearn model. """
     model = RandomForestClassifier
     params = {
-        'n_estimators': 160,
-        'min_impurity_decrease': 4.0e-5,
-        'n_jobs': 2,
+        'n_estimators': 100,
+        'min_impurity_decrease': 5.0e-5,
+        'n_jobs': -1,
         'max_features': 15,
-        'min_samples_leaf': 30,
-        'class_weight': {0: 1, 1: 5}
+        'min_samples_leaf': 30
     }
 
     return model(**params)
@@ -70,4 +69,3 @@ def build_full_pipeline(prep_pipeline, estimator):
             ('estimator', estimator)
         ]
     )
-
