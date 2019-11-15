@@ -15,7 +15,7 @@ Public methods:
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import RobustScaler, OneHotEncoder
+from sklearn.preprocessing import QuantileTransformer, OneHotEncoder
 from sklearn.pipeline import Pipeline
 
 
@@ -26,14 +26,14 @@ def build_prep_pipeline(continuous_cols, category_cols):
     """
     categorical_pipeline = Pipeline(
         steps=[
-            ('imp', SimpleImputer(strategy='constant', fill_value='missing')),
+            ('impute', SimpleImputer(strategy='constant', fill_value='missing')),
             ('onehot', OneHotEncoder(handle_unknown='ignore'))
         ]
     )
     continuous_pipeline = Pipeline(
         steps=[
-            ('scaler', RobustScaler(quantile_range=(1.0, 99.0))),
-            # ('projector', PCA(n_components=15))
+            ('impute', SimpleImputer(strategy='median'))
+            ('scale', QuantileTransformer(output_distribution='normal')),
         ]
     )
     full_prep_pipeline = ColumnTransformer(
