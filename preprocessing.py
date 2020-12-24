@@ -48,14 +48,17 @@ class PercentileTruncator(TransformerMixin, BaseEstimator):
         """
         # at fit, convert sparse matrices to csc for optimized computation of
         # the quantiles
-        X = check_array(X, accept_sparse='csc', estimator=self,
-                        dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
+        X = check_array(
+            X, accept_sparse='csc',
+            estimator=self,
+            dtype=FLOAT_DTYPES,
+            force_all_finite='allow-nan'
+        )
 
         q_min, q_max = self.quantile_range
         if not 0 <= q_min <= q_max <= 100:
             raise ValueError("Invalid quantile range: %s" %
                              str(self.quantile_range))
-
 
         quantiles = []
         for feature_idx in range(X.shape[1]):
@@ -69,8 +72,7 @@ class PercentileTruncator(TransformerMixin, BaseEstimator):
             else:
                 column_data = X[:, feature_idx]
 
-            quantiles.append(np.nanpercentile(column_data,
-                                                  self.quantile_range))
+            quantiles.append(np.nanpercentile(column_data, self.quantile_range))
 
         quantiles = np.transpose(quantiles)
 
@@ -87,9 +89,14 @@ class PercentileTruncator(TransformerMixin, BaseEstimator):
             The data used to scale along the specified axis.
         """
         check_is_fitted(self, attributes=['left_limit_', 'right_limit_'])
-        X = check_array(X, accept_sparse=('csr', 'csc'), copy=self.copy,
-                        estimator=self, dtype=FLOAT_DTYPES,
-                        force_all_finite='allow-nan')
+        X = check_array(
+            X, 
+            accept_sparse=('csr', 'csc'), 
+            copy=self.copy,
+            estimator=self,
+            dtype=FLOAT_DTYPES,
+            force_all_finite='allow-nan'
+        )
 
         if sparse.issparse(X):
             return 'not implemented'
